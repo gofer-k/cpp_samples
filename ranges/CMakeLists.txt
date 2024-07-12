@@ -11,3 +11,5 @@ add_library(RangesFilters INTERFACE)
 target_sources(RangesFilters INTERFACE ${HEADER_FILES})
 
 target_include_directories(RangesFilters INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(test)
