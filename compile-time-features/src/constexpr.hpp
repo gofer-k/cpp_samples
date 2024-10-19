@@ -63,4 +63,10 @@ constexpr bool is_any_null(const Args&... args)
 {
   return (... || (args == nullptr));
 }
+
+template <typename T>
+constexpr std::string printBool(const T& arg) {
+  return arg ? "true" : "false";
+}
+
 } // ConstExpr

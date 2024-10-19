@@ -2,6 +2,7 @@
 #include "compile_loop.hpp"
 #include "constexpr.hpp"
 #include "sieve_primes.hpp"
+#include <vector>
 
 // template <int p, int i> struct is_prime {
 //   enum {
@@ -40,25 +41,35 @@ int main() {
   // Prime_print<18> a;
   // a.f();
 
-  factorial<10> fac;
-  std::cout << "Factoral(10): " << fac.value << std::endl;
+  {
+    factorial<10> fac;
+    std::cout << "Factoral(10): " << fac.value << std::endl;
 
-  std::cout << "Factoral2(10): " << factorial2<10>::value << std::endl;
+    std::cout << "Factoral2(10): " << factorial2<10>::value << std::endl;
 
-  std::cout << "constexpr factorial_recursive(10): " << ConstExpr::factorial_recursive(10) << std::endl;
+    std::cout << "constexpr factorial_recursive(10): " << ConstExpr::factorial_recursive(10) << std::endl;
 
-  std::cout << "constexpr factorial_iter(10): " << ConstExpr::factorial_iter(10) << std::endl;
-
-  std::cout << "Primes: ";
-  Primers::output(Primers::primes_to<100>());
-  std::cout << std::endl;
-
-  constexpr auto primes = ConstExpr::get_prime_array<100000>();
-  std::cout << "constrexpr Primes: ";
-  for (const auto& p : primes) {
-        std::cout << p << "\t";
+    std::cout << "constexpr factorial_iter(10): " << ConstExpr::factorial_iter(10) << std::endl;
   }
-  std::cout << std::endl;
 
+  {
+     std::cout << "Primes: ";
+      Primers::output(Primers::primes_to<100>());
+      std::cout << std::endl;
+
+    constexpr auto primes = ConstExpr::get_prime_array<100000>();
+    std::cout << "constrexpr Primes: ";
+    for (const auto& p : primes) {
+          std::cout << p << "\t";
+    }
+    std::cout << std::endl;
+  }
+  
+  {
+    auto integer = 32;
+    std::cout << "is_any_null arguments: " << ConstExpr::printBool(ConstExpr::is_any_null())
+              << ", Constexpr::is_any_null(*int, nullptr):" << ConstExpr::printBool(ConstExpr::is_any_null(&integer, nullptr))
+              << std::endl;
+  } 
   return 0;
 }
