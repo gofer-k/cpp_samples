@@ -1,6 +1,7 @@
 
 #include "co_generator.hpp"
 #include "co_tree_traversal.hpp"
+#include "custom_coroutine.hpp"
 #include <print>
 
 int main() {
@@ -32,4 +33,19 @@ int main() {
     }
     std::println("");
   }  
+
+  {
+    // Custtom coroutine
+    std::println("Custom coroutine");    
+    auto coro = [] -> CustomCoroutine::Coroutine<int> {
+      co_return 123;
+    };    
+
+    auto res = coro();
+    std::println("Custom coroutine result: {}", res.get());
+
+    // std::println("Custom coroutine result: {}", coro().get());
+
+    //TODO: debug SIGFAULT at the end executng coroutine
+  }
 }

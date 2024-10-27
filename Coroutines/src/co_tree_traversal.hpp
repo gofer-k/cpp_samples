@@ -1,3 +1,4 @@
+// https://simontoth.substack.com/p/daily-bite-of-c-coroutines-step-by
 #include <coroutine>
 #include <generator>
 #include <memory>
