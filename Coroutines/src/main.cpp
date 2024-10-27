@@ -38,14 +38,17 @@ int main() {
     // Custtom coroutine
     std::println("Custom coroutine");    
     auto coro = [] -> CustomCoroutine::Coroutine<int> {
+      throw std::runtime_error("Runtime exception...");
       co_return 123;
     };    
 
-    auto res = coro();
-    std::println("Custom coroutine result: {}", res.get());
-
-    // std::println("Custom coroutine result: {}", coro().get());
-
-    //TODO: debug SIGFAULT at the end executng coroutine
+    try {
+      auto res = coro();
+      std::println("Custom coroutine result: {}", res.get());
+      // The same above
+      std::println("Custom coroutine result: {}", coro().get());
+    }
+    catch (const std::exception& e) {
+    }
   }
 }

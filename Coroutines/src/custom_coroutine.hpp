@@ -13,7 +13,12 @@ struct Coroutine {
 
   explicit Coroutine(promise_type::handle_ handle) : handle_(handle) {}
 
-  T get() {    
+  T get() {
+    // THrown exception in the coroutine execution
+    if (handle_.promise().exp() != nullptr)  {      
+      std::rethrow_exception(handle_.promise().exp()); 
+    }
+    // None an exception during the execution
     return handle_.promise().result();
   }
 
@@ -59,17 +64,25 @@ struct CoroutinePromise {
   // Customization coroutine point when there is an unhanded exception.
   void unhandled_exception() {
     // Optiopn 1: when an exception is thrown within a coroutine execution stack
-    std::terminate();
+    // std::terminate();
+    
     // Option 2: evaluate the excep[tion,  re-emit the exception to the caller and
     // the caller can try again access the coroutine result. 
+    exp_ = std::current_exception();
   }
 
   T result() const {
     return result_;
   }
+
+  std::exception_ptr  exp() const {
+    return exp_;
+  }
+
 private:
   // The result coroutine. 
   T result_;
+  std::exception_ptr exp_;
 };
 
 // Any coroutine returning a type.
