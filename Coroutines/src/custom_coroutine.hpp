@@ -57,7 +57,12 @@ struct CoroutinePromise {
   // void return_void() {}
 
   // Customization coroutine point when there is an unhanded exception.
-  void unhandled_exception() {}
+  void unhandled_exception() {
+    // Optiopn 1: when an exception is thrown within a coroutine execution stack
+    std::terminate();
+    // Option 2: evaluate the excep[tion,  re-emit the exception to the caller and
+    // the caller can try again access the coroutine result. 
+  }
 
   T result() const {
     return result_;
