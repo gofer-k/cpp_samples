@@ -1,3 +1,6 @@
+#ifndef CO_TREE_TRAVERSAL_HPP_
+#define CO_TREE_TRAVERSAL_HPP_
+
 // https://simontoth.substack.com/p/daily-bite-of-c-coroutines-step-by
 #include <coroutine>
 #include <generator>
@@ -71,3 +74,4 @@ Tree BuildTree() {
   return tree;
 }
 } // namespace
+#endif // CO_TREE_TRAVERSAL_HPP_

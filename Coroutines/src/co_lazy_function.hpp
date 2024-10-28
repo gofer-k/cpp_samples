@@ -1,20 +1,20 @@
-#ifndef CUSTOM_COROUTINE_HPP_
-#define CUSTOM_COROUTINE_HPP_
+#ifndef CO_LAZY_FUNCTION_HPP_
+#define CO_LAZY_FUNCTION_HPP_
 
-// https://simontoth.substack.com/p/daily-bite-of-c-coroutines-step-by
 #include "custom_coroutine_handle.hpp"
 #include <coroutine>
+#include <exception>
 
-namespace CustomCoroutine {
-
-template<typename T>
-struct CoroutinePromise;
+namespace LazyCoro {
 
 template<typename T>
-struct Coroutine {
-  using promise_type = CoroutinePromise<T>;
+struct LazyCoroutinePromise;
 
-  explicit Coroutine(promise_type::handle_ handle) : handle_(handle) {}
+template<typename T>
+struct LazyCoroutine {
+  using promise_type = LazyCoroutinePromise<T>;
+
+  explicit LazyCoroutine(promise_type::handle_ handle) : handle_(handle) {}
 
   T get() {
     // THrown exception in the coroutine execution
@@ -22,6 +22,13 @@ struct Coroutine {
       std::rethrow_exception(handle_.promise().exp()); 
     }
     // None an exception during the execution
+    if (not handle_.done()) {            
+      handle_.resume();
+    }
+
+    // Result increment value after suspendation to the completion coroutine.
+    auto inc = 1;
+    handle_.promise().chageValue(inc);
     return handle_.promise().result();
   }
 
@@ -30,20 +37,21 @@ struct Coroutine {
   }
 
 private: 
-  CustomCoroutineHandle::CoroutineHandle<CoroutinePromise<T>> handle_;
+  CustomCoroutineHandle::CoroutineHandle<LazyCoroutinePromise<T>> handle_;
 };
 
 template<typename T>
-struct CoroutinePromise {
-  using handle_ = std::coroutine_handle<CoroutinePromise<T>>;
+struct LazyCoroutinePromise {
+  using handle_ = std::coroutine_handle<LazyCoroutinePromise<T>>;
 
   // Customization coroutine point: : passed returned type to a caller.
-  Coroutine<T> get_return_object() {
-    return Coroutine<T>{handle_::from_promise(*this)};
+  LazyCoroutine<T> get_return_object() {
+    return LazyCoroutine<T>{handle_::from_promise(*this)};
   }
 
   // Customization coroutine point: happend before the coroutine body starts.
-  std::suspend_never initial_suspend() noexcept {
+  // Immediate return result to the caller.
+  std::suspend_always initial_suspend() noexcept {
     return {};
   }
 
@@ -78,6 +86,11 @@ struct CoroutinePromise {
     return result_;
   }
 
+  template<std::convertible_to<T> Arg> 
+  void chageValue(Arg&& new_value) {
+    result_ += std::forward<Arg>(new_value);
+  }
+
   std::exception_ptr  exp() const {
     return exp_;
   }
@@ -88,12 +101,6 @@ private:
   std::exception_ptr exp_;
 };
 
-// Any coroutine returning a type.
-// template <typename... Args>
-// std::coroutine_traits<Coroutine<Args...>> {
-//   using promise_type = CoroutinePromise<Args...>;
-// };
-  
 } // namespace
 
-#endif // CUSTOM_COROUTINE_HPP_
+#endif // CO_LAZY_FUNCTION_HPP_
