@@ -84,7 +84,7 @@ struct CustomGeneratorPromise {
     return {};
   }
 
-  // TODO: void return value here?
+  // None return value supported in this coroutine.
   void return_void() {}
   void unhandled_exception() {}
   

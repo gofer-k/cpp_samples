@@ -1,5 +1,6 @@
 
 #include "co_generator.hpp"
+#include "co_iterator.hpp"
 #include "co_lazy_function.hpp"
 #include "co_tree_traversal.hpp"
 #include "custom_coroutine.hpp"
@@ -14,7 +15,7 @@ std::println("Fibonacci generator: ");
 }
 
 
-void fibonacci_custom_generatpr(int n) {
+void fibonacci_custom_generatpr(int n) {  
   auto fibonacci = [](int limit) -> CoGenerator::CustomGenerator<int> {
     int prev = 0;
     int next = 1;
@@ -28,6 +29,24 @@ void fibonacci_custom_generatpr(int n) {
   auto res = fibonacci(n);
   while (not res.exhausted()){
     std::print("{} ", res.get());
+  }
+
+  std::println();
+}
+
+void fibonacci_custom_generatpr_enabled_range_interface(int n) {  
+  auto fibonacci = [](int limit) -> CoIterator::CoGenerator<int> {
+    int prev = 0;
+    int next = 1;
+    for (;limit > 0; --limit) {      
+        co_yield std::exchange(prev, std::exchange(next, prev + next));
+    }
+    co_return;
+  };
+  
+  std::println("Fibonacci algorithm with custom coroutine generator with range API: ");
+  for (auto fib : fibonacci(10)) {
+    std::print("{} ", fib);
   }
   std::println();
 }
@@ -91,6 +110,7 @@ void lazy_coroutine(){
 int main() {
   fibonaccii_std_generator(10);
   fibonacci_custom_generatpr(10);
+  fibonacci_custom_generatpr_enabled_range_interface(10);
   co_tree_tranversal();
   custom_coroutine();
   lazy_coroutine();
