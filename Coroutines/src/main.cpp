@@ -2,6 +2,7 @@
 #include "co_generator.hpp"
 #include "co_iterator.hpp"
 #include "co_lazy_function.hpp"
+#include "co_scheduler.hpp"
 #include "co_tree_traversal.hpp"
 #include "custom_coroutine.hpp"
 #include <print>
@@ -107,6 +108,26 @@ void lazy_coroutine(){
   std::println("res = {}, res2 = {}\n", res, res2);        
 }
 
+void awaitable_tasks(int number_tasks) {
+  std::println("Multi co-tasks");
+  auto tasks = [number_tasks] ->  CoMultiTask::CoTask {
+    auto countdown = number_tasks;
+    for (; countdown > 1; --countdown) {
+      std::println("The task ({})", countdown);
+      co_await CoMultiTask::CoScheduler().wake_up();
+    }
+  };
+
+  for(; number_tasks > 1; --number_tasks) {
+    tasks().detach();
+  }
+  // Complete multiktask
+  tasks().detach();
+  
+  CoMultiTask::CoScheduler().run();
+  std::println();
+}
+
 int main() {
   fibonaccii_std_generator(10);
   fibonacci_custom_generatpr(10);
@@ -114,4 +135,5 @@ int main() {
   co_tree_tranversal();
   custom_coroutine();
   lazy_coroutine();
+  awaitable_tasks(3);
 }

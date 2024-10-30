@@ -47,6 +47,9 @@ struct CoroutineHandle {
     }
   }
   
+  std::coroutine_handle<> detach() {
+    return std::exchange(handle_, {});
+  }
 private: 
   std::coroutine_handle<promise_type> handle_;
 };
