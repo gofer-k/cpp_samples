@@ -1,4 +1,5 @@
 
+#include "co_awaitable_abstraction.hpp"
 #include "co_generator.hpp"
 #include "co_iterator.hpp"
 #include "co_lazy_function.hpp"
@@ -108,13 +109,13 @@ void lazy_coroutine(){
   std::println("res = {}, res2 = {}\n", res, res2);        
 }
 
-void awaitable_tasks(int number_tasks) {
+void multi_tasks(int number_tasks) {
   std::println("Multi co-tasks");
   auto tasks = [number_tasks] ->  CoMultiTask::CoTask {
     auto countdown = number_tasks;
     for (; countdown > 1; --countdown) {
       std::println("The task ({})", countdown);
-      co_await CoMultiTask::CoScheduler().wake_up();
+      co_await CoMultiTask::CoScheduler{}.wake_up();
     }
   };
 
@@ -128,6 +129,36 @@ void awaitable_tasks(int number_tasks) {
   std::println();
 }
 
+
+void times_multi_tasks(int number_tasks) {
+  std::println("Multi co-tasks");
+  auto tasks = [number_tasks] ->  CoMultiTask::CoTaskTimed {
+    auto countdown = number_tasks;
+    auto time =  std::chrono::system_clock::now();
+    for (; countdown > 1; --countdown) {
+      std::println("The task ({} time: {})", countdown, std::chrono::system_clock::now());
+      co_await (time);
+      time += std::chrono::milliseconds(200);
+    }
+  };
+
+  for(; number_tasks > 1; --number_tasks) {
+    tasks().detach();
+  }
+  // Complete multiktask
+  tasks().detach();
+  
+  CoMultiTask::CoScheduler().run();
+  std::println();
+}
+
+void awaitable_abstration() {
+  std::println("Awaitable abstraction");
+  
+  CoAwaitableInterface::parent().run_until_completion();
+  CoAwaitableInterface::other_parent(234325).run_until_completion();
+}
+
 int main() {
   fibonaccii_std_generator(10);
   fibonacci_custom_generatpr(10);
@@ -135,5 +166,7 @@ int main() {
   co_tree_tranversal();
   custom_coroutine();
   lazy_coroutine();
-  awaitable_tasks(3);
+  multi_tasks(3);
+  times_multi_tasks(3);
+  awaitable_abstration();
 }
