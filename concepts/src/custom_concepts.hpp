@@ -1,6 +1,7 @@
 #ifndef CUSTOM_CONCEPTS_HPP_
 #define CUSTOM_CONCEPTS_HPP_
 
+#include <print>
 
  namespace CustomConcepts
  {
@@ -34,6 +35,8 @@
   template <typename T>
   concept Divideable_not_zero = Zero<T> && Divideable<T>;
 
+
+  // Contrainted (required concept Addable) overload if 'add' function.
   template <typename T>
   requires Addable<T>
   T add(T a, T b) {
@@ -46,13 +49,18 @@
     return a + b;
   }
 
-  template<Divideable T>
+
+  // Contrainted (required concept Divideable) overload if 'divide' function.
+  template<typename T>
+  requires Divideable<T>
   T divide(T a, T b) {
     return a / b;
   }
 
-  template <Divideable_not_zero T>
-  auto divide_not_zero(T a, T b) {
+  // Contrainted overload 'divide' function with (required concept Divideable_not_zero) .
+  template <typename T>
+  requires Divideable_not_zero<T>
+  auto divide(T a, T b) {
     return a / b;
   }
 
@@ -60,7 +68,33 @@
   bool zero_value(T a) {
     return a ==  static_cast<T>(0);
   }
- } // namespace CustomConcepts
+
+  template<typename Container, typename Range>
+  void cont_assign(Container& cont, Range&& rng) {
+    cont.clear();
+    
+    // if (rng.empty()) {
+    //   return;
+    // }
+
+    // reserve a container if the one has
+    if constexpr (requires {cont.reserve(std::ranges::size(rng)); }) {
+      std::println("Reserve container if it's the one");
+      cont.reserve(std::ranges::size(rng));
+    }
+
+    for (auto&& elem : std::forward<Range>(rng)) {
+      if constexpr (requires {cont.push_back(elem); }) {
+        std::println("A container with push_back method: std::vector" );
+        cont.push_back(std::forward<decltype(elem)>(elem));
+      }
+      if constexpr (requires {cont.emplace(elem); }) {
+        std::println("A container with emplace method i.e: std::set" );
+        cont.emplace(std::forward<decltype(elem)>(elem));
+      }
+    }
+  }
+  } // namespace CustomConcepts
  
 
 #endif // CUSTOM_CONCEPTS_HPP

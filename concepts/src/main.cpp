@@ -1,5 +1,7 @@
 #include "custom_concepts.hpp"
 #include <print>
+#include <set>
+#include <vector>
 
 int main() {
   int ia = 1, ib = 2, ic = 0;
@@ -24,5 +26,18 @@ int main() {
   // CustomConcepts::add(ia, ub);  // error!!
   // CustomConcepts::add(fa, ib);  /// error!!
   // CustomConcepts::add(fa, db);    // error!!
+
+
+  {
+    std::vector<std::int32_t> source_container = {1, 2, 3, 5, 8, 13, 21, 3435};    
+    {
+      std::vector<std::int32_t> dest_container;
+      CustomConcepts::cont_assign(dest_container, source_container);
+    }
+    {
+      std::set<std::int32_t> dest_container;
+      CustomConcepts::cont_assign(dest_container, source_container);
+    }
+  }
   return 0;
 }
