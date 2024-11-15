@@ -5,8 +5,13 @@ template<typename... Ts>
 void print_args2(Ts... args) {
   if constexpr (sizeof...(args) > 0) {
     std::println("{}", args...);   // print only the first element
-    // (std::cout << ... << " " << args) << " " << std::endl;  ///not compile
-    (std::cout << ... << args) << std::endl;
+    
+    // Print the all pack elements with print separator
+    // Unary right fold (E op ...) becomes (E1 op (... op (EN-1 op EN)))
+    // E = (std::cout << args << ", ")
+    // op = ',' 
+    // ... = pack
+    ((std::cout << args << ", "), ...) << std::endl;
     return;
   }
   std::println("Empty arguments");
