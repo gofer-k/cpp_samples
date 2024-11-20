@@ -20,7 +20,9 @@ target_sources(lambdas_samples_lib
     FILE_SET CXX_MODULES FILES
     # implemation needs is suffic 'cxx', 'cpp'
       src/capture_this.cxx
-      src/generic_lambda.cxx)
+      src/capture_pack_expansion.cxx
+      src/generic_lambda.cxx
+      src/stateless_lambda.cxx)
 
 add_executable(lambdas_samples
   src/main.cpp)

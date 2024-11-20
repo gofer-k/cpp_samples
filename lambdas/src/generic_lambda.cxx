@@ -3,7 +3,7 @@ module;
 #include <type_traits>
 #include <vector>
 
-export module GenericLambda;
+export module generic_lambda;
 
 export void generic_lambda_parameter() {
   std::vector<std::uint32_t> vec = {1, 34, 54, 65};
@@ -23,28 +23,41 @@ export void generic_lambda_parameter() {
   b(vec);
 }
 
-export void generic_access_argument() {
-  std::vector<std::uint32_t> vec = {1, 34, 54, 65};
+template <typename T>
+struct Account {
+  Account(T balance) : balance_(std::move(balance)) {}
 
+  T balance() const {
+    return balance_;
+  }
+  
+  static T static_balance();
+
+private:
+  T balance_{};
+};
+template<typename T>
+T Account<T>::static_balance() {
+  return T{}; 
+}
+
+export void generic_access_argument() {
+  Account<std::uint32_t> acc{23344};
+  
   // Until C+20
   auto a = [](const auto& arg) {
     using T = std::decay_t<decltype(arg)>;
     // using T = decltype(x); // without decay_t<> it would be const T&, so
     T copy = arg;             // copy would be a ref
-    // T::static__func();        // not compile
-
-    using Iter = typename T::iterator;
+    T::static_balance();     
   };
 
   // Since C++20
   auto b = []<typename T>(const T& arg) {
     T copy = arg;
-    // T::static__func();        // not compile
-
-    using Iter = typename T::iterator;    
+    T::static_balance();       
   };
 
-  a(vec);
-  b(vec);
+  a(acc);
+  b(acc);
 }
-

@@ -1,7 +1,9 @@
 #include <print>
 
-import LambdaCaptureThis;
-import GenericLambda;
+import capture_pack_expansion;
+import lambda_capture_this;
+import generic_lambda;
+import stateless_lambda;
 
 int main() {
   CaptureThis x;
@@ -25,5 +27,12 @@ int main() {
     generic_access_argument();
   }
   
+  {
+    map_constructible_type.emplace("a", 1);
+    map_constructible_type.emplace("b", 2);
+  }
+  {
+    call_functor_with_pack_expasion();
+  }
   return 0;
 }

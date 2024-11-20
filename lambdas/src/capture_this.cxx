@@ -1,7 +1,7 @@
 module;
 #include <cstdint>
 
-export module LambdaCaptureThis;
+export module lambda_capture_this;
 
 export struct CaptureThis {
   [[deprecated("Since C++20. Implicity refecenced 'this'.") ]]
