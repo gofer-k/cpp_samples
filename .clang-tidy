@@ -1,0 +1,5 @@
+Checks: 'clang-diagnostic-", clang-analyzer-", cppcoreguidelines-",'
+WarningsAsErrors: true 
+CheckOptions:
+  - key: cppcoreguidelines-avoid-numbers, IgnoredIntegerValues
+    value: '1'
