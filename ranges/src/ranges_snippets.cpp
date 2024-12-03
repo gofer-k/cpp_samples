@@ -1,7 +1,8 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
-#include "ranges/src/filters.hpp"
+#include "filters.hpp"
+#include "ranges_init_loop.hpp"
 
 int main() {
   std::vector<int> numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -14,6 +15,8 @@ int main() {
     std::cout << num << " ";}
     );
   std::cout << std::endl;
+  
+  test_init_range_loop();
   
   return 0;
 }
