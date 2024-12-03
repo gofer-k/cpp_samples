@@ -1,13 +1,14 @@
 
 cmake_minimum_required(VERSION 3.27.4)
 
-project(RangersSamples)
+project(ranges_samples)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(RangersSamples ranges_snippets.cpp)
+add_executable(ranges_samples 
+  src/ranges_snippets.cpp)
 
-target_include_directories(RangersSamples
+target_include_directories(ranges_samples
   PRIVATE
-    include)
+    src/include)
