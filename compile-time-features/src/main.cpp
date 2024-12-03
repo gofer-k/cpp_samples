@@ -71,5 +71,7 @@ int main() {
               << ", Constexpr::is_any_null(*int, nullptr):" << ConstExpr::printBool(ConstExpr::is_any_null(&integer, nullptr))
               << std::endl;
   } 
+
+  test_ctad_alias();
   return 0;
 }
