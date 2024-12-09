@@ -41,14 +41,16 @@ export void test_structured_bindings() {
   // Structured bindings filtered members
   {
     auto agg = Aggregate{};
-    auto [a, b, c] = std::tie(agg.a, agg.b, agg.c);
+    // Avoid copy binding values unless you want to it.
+    const auto& [a, b, c] = std::tie(agg.a, agg.b, agg.c);
   }
 }
 
 void foo() {
   Aggregate agg;
   auto binding_members = agg.d; // OK - access private member
-  auto [x, y, z, d] = agg;      // OK - all members are bound
+  // Avoid copy binding values unless you want to it.
+  const auto& [x, y, z, d] = agg;      // OK - all members are bound
 }
 
 export void test_structured_bindings_members() { foo(); }
