@@ -14,17 +14,15 @@ export consteval std::uint32_t inc_value(std::uint32_t val) {
   return val;
 }
 
-/*
-export constexpr std::uint32_t try_modify_value(std::uint32_t val) {
-  auto res = inc_value(val);
-  // return inc_value(res);    // not compile, because not const expression
-  // return inc_value(val + 1);  // not compile, because not const expression
-  return inc_value(val);
+export consteval std::uint32_t product(std::uint32_t val, std::uint32_t fact) {
+  // consteval functions are allowed and return a result
+  return inc_value(val) * inc_value(fact);
 }
-*/
 
 constexpr int get_number() {
-  if (std::is_constant_evaluated()) { // should not be `if constexpr`
+  // if (std::is_constant_evaluated()) { // should not be `if constexpr` - C++20
+  // The same as above 
+  if consteval {  // C++23
     return 1;
   }
   return 2;
@@ -56,6 +54,8 @@ export void test_constant_evaluation() {
 
   assert(v4 == 1);
   assert(v5 == 2);
+
+  static_assert(product(2, 4) == 15); // 2++ * 4++ -> 5
 }
 
 export constexpr bool is_in_constexpr(int) {
