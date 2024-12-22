@@ -1,6 +1,7 @@
 #include "std_ref_wrappes.hpp"
 #include <functional>
-#include <iostream>
+#include <print>
+#include <future>
 
 int main() {
   vectorRefs();
@@ -32,16 +33,35 @@ int main() {
     n1 = 10;
     n2 = 11;
     n3 = 12;
-    std::cout << "Before calling func_refs() directly: " << n1 << ' ' << n2 << ' ' << n3 << '\n';
+    std::println("Before calling func_refs() directly: {}, {}, {}", n1, n2, n3);
     func_refs(n1, n2, n3);
     
-    std::cout << "After calling func_refs() directly: " << n1 << ' ' << n2 << ' ' << n3 << '\n';
-    std::cout << "==================\n";
+    std::println("After calling func_refs() directly: {}, {}, {}", n1, n2, n3);
+    std::println("=================");
     
-    std::cout << "Before calling bound_func_refs(): " << n1 << ' ' << n2 << ' ' << n3 << '\n';
+    std::println("Before calling bound_func_refs(): {}, {}, {}",  n1, n2, n3);
     bound_f();
     bound_f();
-    std::cout << "After calling bound_func_refs(): " << n1 << ' ' << n2 << ' ' << n3 << '\n';
+    std::println("After calling bound_func_refs(): {}, {}, {}", n1, n2, n3);
   }
+  
+  {
+    auto test = [value = 0]() mutable {
+    std::println("Hello from lambda {}", ++value);
+    };
+
+    std::function<void()> move_func = std::move(test);
+    move_func();
+    move_func();
+
+    std::packaged_task<double()> packaged_task([](){ return 3.14159; });
+    std::future<double> future = packaged_task.get_future();
+    auto lambda = [task = std::move(packaged_task)]() mutable { task(); };
+    // std::function<void()> function = std::move(lambda); // Error
+    std::move_only_function<void()> function = std::move(lambda); // OK
+    function();
+    std::println("Value from erasure function: {}", future.get());
+  }
+  
   return 0;
 }
