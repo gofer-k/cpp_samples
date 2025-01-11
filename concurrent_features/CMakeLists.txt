@@ -20,9 +20,13 @@ target_sources(concurrent_samples_lib
   PUBLIC
     FILE_SET CXX_MODULES FILES
     # implemation needs is suffic 'cxx', 'cpp'
+      src/barrier_samples.cxx
       src/free_lock_samples.cxx
-      src/jthread_sample.cxx      
+      src/jthread_sample.cxx    
+      src/latch_samples.cxx  
+      src/locks_samples.cxx
       src/mutual_exclusion_samples.cxx
+      src/route.cxx
       )
 
 add_executable(concurrent_samples
