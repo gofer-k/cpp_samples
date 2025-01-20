@@ -10,11 +10,19 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS=ON)
 # This necessarily with GCC 14 onward
 set(CMAKE_CXX_FLAGS "-fmodules-ts")
 
+# Specify the path to the installed library
+set(CMAKE_PREFIX_PATH "/home/useme/develoment/dev/cpp_samples/utilities")
+
+find_package(Utilities REQUIRED)
+
 # Turning off extensions avoids an issue with the clang 16 compiler
 # clang 17 and greater can avoid this setting
 #set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(concurrent_samples_lib)
+
+# Enable external module interfaces source
+add_subdirectory(${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/utilities_build)
 
 target_sources(concurrent_samples_lib
   PUBLIC
@@ -26,8 +34,10 @@ target_sources(concurrent_samples_lib
       src/latch_samples.cxx  
       src/locks_samples.cxx
       src/mutual_exclusion_samples.cxx
-      src/route.cxx
+      src/route.cxx     
       )
+
+target_link_libraries(concurrent_samples_lib Utilities)
 
 add_executable(concurrent_samples
   src/main.cxx)

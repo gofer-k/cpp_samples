@@ -7,14 +7,10 @@ module;
 #include <vector>
 #include <thread>
 
-using product_data = std::vector<int>;
+export module barrier_samples;
+import utilities;
 
-void print_collection(const product_data& coll) {
-  std::for_each(coll.begin(), coll.end(), [](const auto& elem) {
-      std::print("{} ", elem); 
-  });
-  std::println();
-}
+using product_data = std::vector<int>;
 
 void on_completion() {
   std::println("on_completion thread {}", std::this_thread::get_id());
@@ -42,10 +38,10 @@ struct producer {
 
   void operator()() {
     std::println("---Barrier sample");
-    print_collection(data_);
+    print_vector(data_);
 
     const auto data_size = std::size(data_);
-    const auto num_chunks = (data_size >= 2) ?  data_size / 2 : data_size;    
+    const auto num_chunks = (data_size >= 4) ?  data_size / 2 : data_size;    
 
     std::vector<chunk_data> chunks;    
     chunks.reserve(num_chunks);
@@ -64,7 +60,7 @@ struct producer {
     }
     
     std::for_each(chunks.begin(), chunks.end(), [](const auto& chunk) {
-      print_collection(chunk.chunk_);
+      print_vector(chunk.chunk_);
     });
     const auto total_reduces_values = std::transform_reduce(chunks.begin(), chunks.end(), 0, std::plus<int>(), [](const auto& chunk) {
       return std::reduce(chunk.chunk_.begin(), chunk.chunk_.end(), 0);
@@ -73,7 +69,6 @@ struct producer {
   } 
 };
 
-export module barrier_samples;
 
 export void test_barrier_sample() {
   product_data data = std::ranges::iota_view{0, 10} | std::ranges::to<product_data>();
