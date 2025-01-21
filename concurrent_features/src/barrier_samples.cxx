@@ -23,7 +23,7 @@ struct chunk_data {
   chunk_data(product_data chunk) : chunk_(std::move(chunk)) {
   }
 
-  void work_chunk(barrier_t& sync_point) {    
+  void work_chunk(barrier_t& sync_point) {        
     std::transform(chunk_.begin(), chunk_.end(), chunk_.begin(), [](int i) { return i * 2; });
     sync_point.arrive_and_wait();
   }
@@ -59,6 +59,11 @@ struct producer {
       thd_.emplace_back(&chunk_data::work_chunk, &chunk, std::ref(barrier));
     }
     
+    // Why do we need to join the jthreads here?
+    for (auto& thread : thd_) {
+      thread.join();
+    }
+
     std::for_each(chunks.begin(), chunks.end(), [](const auto& chunk) {
       print_vector(chunk.chunk_);
     });

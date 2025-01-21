@@ -28,6 +28,7 @@ target_sources(concurrent_samples_lib
   PUBLIC
     FILE_SET CXX_MODULES FILES
     # implemation needs is suffic 'cxx', 'cpp'
+      src/async_features.cxx
       src/barrier_samples.cxx
       src/free_lock_samples.cxx
       src/jthread_sample.cxx    

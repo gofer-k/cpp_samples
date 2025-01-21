@@ -1,3 +1,4 @@
+import async_features;
 import barrier_samples;
 import jthread_sample;
 import free_lock_samples;
@@ -15,6 +16,7 @@ int main() {
   test_scope_lock_sample();
   test_latch_sample();
   test_barrier_sample();
+  async_features::test_async();
   simulate_route();
   return 0;
 }
