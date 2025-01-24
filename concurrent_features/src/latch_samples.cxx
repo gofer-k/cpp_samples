@@ -7,8 +7,9 @@ module;
 #include <vector>
 #include <thread>
 
+import user_utilities;
+
 export module latch_samples;
-import utilities;
 
 using product_data = std::vector<int>;
 
@@ -33,9 +34,8 @@ struct producer {
 
   void operator()() {
     std::println("---Latch sample");
-    print_vector(data_);
-    // print_collection(data_);
-
+    user_utilities::print_vector(data_);
+    
     const auto data_size = std::size(data_);
     const auto num_chunks = (data_size >= 4) ?  data_size / 4 : data_size;
     
@@ -58,7 +58,7 @@ struct producer {
     latch.wait();   // OK here
 
     std::for_each(chunks.begin(), chunks.end(), [](const auto& chunk) {
-      print_vector(chunk.chunk_);
+      user_utilities::print_vector(chunk.chunk_);
     });   
 
     const auto total_reduces_values = std::transform_reduce(chunks.begin(), chunks.end(), 0, std::plus<int>(), [](const auto& chunk) {

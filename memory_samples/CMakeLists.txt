@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 3.28.3)
 
-project(concurrent_samples LANGUAGES CXX)
+project(MemorySamples LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,9 +9,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS=ON)
 
 # This necessarily with GCC 14 onward
 set(CMAKE_CXX_FLAGS "-fmodules-ts")
-
 # Specify the path to the installed library
-set(CMAKE_PREFIX_PATH "/home/useme/develoment/dev/cpp_samples/user_utilities")
+set(CMAKE_PREFIX_PATH "../user_utilities")
 
 find_package(UserUtilities REQUIRED)
 
@@ -19,28 +18,26 @@ find_package(UserUtilities REQUIRED)
 # clang 17 and greater can avoid this setting
 #set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(concurrent_samples_lib)
-
 # Enable external module interfaces source
 add_subdirectory(${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/user_utilities_build)
 
-target_sources(concurrent_samples_lib
+add_library(MemorySamples_lib)
+
+# Specify include directories
+# target_include_directories(utilities_cpp PUBLIC src)
+
+target_sources(MemorySamples_lib
   PUBLIC
     FILE_SET CXX_MODULES FILES
     # implemation needs is suffic 'cxx', 'cpp'
-      src/async_features.cxx
-      src/barrier_samples.cxx
-      src/free_lock_samples.cxx
-      src/jthread_sample.cxx    
-      src/latch_samples.cxx  
-      src/locks_samples.cxx
-      src/mutual_exclusion_samples.cxx
-      src/route.cxx     
+      src/allocation_samples.cxx
       )
 
-target_link_libraries(concurrent_samples_lib UserUtilities)
+target_link_libraries(MemorySamples_lib 
+  PRIVATE
+    UserUtilities)
 
-add_executable(concurrent_samples
+add_executable(MemorySamples
   src/main.cxx)
 
-target_link_libraries(concurrent_samples concurrent_samples_lib UserUtilities)
+target_link_libraries(MemorySamples MemorySamples_lib)

@@ -4,7 +4,7 @@ module;
 #include <thread>
 
 export module async_features;
-import utilities;
+import user_utilities;
 
 void print_thread_id(std::string msg) {
   std::println("{} thread id: {}", msg, std::this_thread::get_id());
@@ -68,10 +68,63 @@ void packaged_task_example() {
 	print_thread_id("Main");
 }
 
+void concurrent_shared_value_one_to_one() {
+	std::println("---Testing concurrent shared value between threads with one-to-one relationship using shared_future");
+	// Create a shared value between threads
+	std::shared_future<std::uint32_t> shared_value = std::async(std::launch::async, []() -> std::uint32_t {
+		std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+		std::uint32_t value = 42;
+		std::println("Inner worker producing shared value: {}, thread id: {}", value, std::this_thread::get_id());
+		return value;
+	}).share();
+
+	// Create a lambda function that takes no arguments and returns void
+	auto lambda = [shared_value]() -> void {
+		// Get the shared value
+		std::uint32_t value = shared_value.get();
+		std::println("Outer worker consuming shared value: {}, thread id: {}", value, std::this_thread::get_id());
+	};
+
+	// Call std::async in the other thread
+	auto future = std::async(std::launch::async, lambda);
+	// Get the result from the future
+	future.get();
+	std::println("---End of concurrent shared value between threads");
+}
+
+void concurrent_shared_value_one_to_one_2() {
+	std::println("---Testing concurrent shared value between threads with one-to-one relationship using promise and future");
+	// Create a shared value between threads
+	using shared_value = std::promise<std::uint32_t>;
+
+	shared_value promise;
+	auto future = promise.get_future();
+
+	{
+		auto inner_worker = [](shared_value value) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(200));
+			value.set_value(42);
+			std::println("Inner worker producing shared value, thread id: {}", std::this_thread::get_id());
+		};
+		std::jthread thread(inner_worker, std::move(promise));
+	}
+	{
+		auto outer_worker = [&future]() {
+			std::uint32_t value = future.get();
+			std::println("Outer worker consuming shared value: {}, thread id: {}", value, std::this_thread::get_id());
+		};
+		std::jthread thread(outer_worker);
+	}
+	std::println("---End of concurrent shared value between threads");
+}
+
 void test_async() {
   std::println("---Testing std::async features");
   async_example();
 	packaged_task_example();
+	concurrent_shared_value_one_to_one();
+	concurrent_shared_value_one_to_one_2();
 	std::println("---End of std::async features");
 }
 } // namespace async_features

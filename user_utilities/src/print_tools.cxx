@@ -2,16 +2,21 @@ module;
 #include <algorithm>
 #include <print>
 #include <ranges>
+#include <cstdint>
+#include <chrono>
 
-export module utilities;
+// Export the module partition
+export module user_utilities:print_tools;
 
-export template <typename Range>
+export namespace user_utilities {
+
+template <typename Range>
 void print_vector(const Range &rng) {
   std::ranges::for_each(rng, [](auto elem) { std::print("{} ", elem); });
   std::println();
 }
 
-export template <typename Range>
+template <typename Range>
 void print_vector_with_index(const Range &rng) {
   auto elem_with_index =
       // mutable allows change captured idx among calls
@@ -27,3 +32,15 @@ void print_vector_with_index(const Range &rng) {
   }
   std::println();
 }
+
+// template<typename Func>
+// void benchmark(Func func, std::size_t num_iterations) {
+//   auto start = std::chrono::high_resolution_clock::now();
+//   while (num_iterations-- > 0) 
+//   {
+//     func();
+//   }
+//   auto end = std::chrono::high_resolution_clock::now();
+//   std::println("Benchmark took: ", std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count(), "ms");     
+// }
+}  // namespace user_utilities
