@@ -1,5 +1,6 @@
 module;
 #include <print>
+#include <vector>
 
 export module deducing_this;
 
@@ -8,7 +9,7 @@ export namespace deducing_this {
 template<typename Elem, typename std::size_t size>
 struct Vector {
     template<typename Self>
-    auto& at(this Self&& self, std::size_t size) {
+    auto& at(this Self&& self) {
         return std::forward<Self>(self).data.at(0);
     }
 
@@ -70,7 +71,6 @@ void test_deducing_this() {
   }   
   */
 }
-}
 
-}
+} // namespace deducing_this
  

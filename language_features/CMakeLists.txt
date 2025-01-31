@@ -18,7 +18,8 @@ add_library(language_features_lib)
 target_sources(language_features_lib
   PUBLIC
     FILE_SET CXX_MODULES FILES
-      src/deducing_this.cxx)
+      src/deducing_this.cxx
+      src/callable_features.cxx)
 
 
 add_executable(language_features
