@@ -19,7 +19,8 @@ target_sources(language_features_lib
   PUBLIC
     FILE_SET CXX_MODULES FILES
       src/deducing_this.cxx
-      src/callable_features.cxx)
+      src/callable_features.cxx
+      src/forwarding_types.cxx)
 
 
 add_executable(language_features
